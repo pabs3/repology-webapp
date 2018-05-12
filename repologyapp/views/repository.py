@@ -16,7 +16,7 @@
 # along with repology.  If not, see <http://www.gnu.org/licenses/>.
 
 import datetime
-from typing import Any
+from typing import Any, Optional
 
 import flask
 
@@ -25,6 +25,8 @@ from repologyapp.db import get_db
 from repologyapp.feed_helpers import unicalize_feed_timestamps
 from repologyapp.globals import repometadata
 from repologyapp.view_registry import ViewRegistrar
+
+from werkzeug.routing import BuildError
 
 
 @ViewRegistrar('/repository/<repo>')

@@ -41,3 +41,30 @@ def package_problems(field: str, repo: str, package: str) -> Any:
         problems=problems,
         autorefresh=autorefresh
     )
+
+
+@ViewRegistrar('/project-by-<field>-in/<repo>/<package>/<page>')
+def package_metapackage(field: str, repo: str, package: str, page: Optional[str] = None) -> Any:
+    if not repo or repo not in repometadata or not package:
+        flask.abort(404)
+
+    metapackages = get_db().get_package_metapackage(field, repo, package)
+    metapackage_count = len(metapackages)
+
+    if metapackage_count == 0:
+        flask.abort(404)
+    elif metapackage_count == 1:
+        page_base = 'metapackage'
+        if page:
+            page = '_' + page
+        else:
+            page = ''
+        page_type = page_base + page
+        metapackage = metapackages[0]
+        try:
+            url = flask.url_for(page_type, name=metapackage)
+        except BuildError:
+            flask.abort(404)
+    else:
+        url = flask.url_for('metapackages', repo=repo, package=package)
+    return flask.redirect(url, 307)
